@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CafeEntity } from '../cafe/cafe.entity';
 import { faker } from '@faker-js/faker';
+import { TiendaEntity } from 'src/tienda/tienda.entity';
 
 describe('CafeService', () => {
   let service: CafeService;
@@ -17,26 +18,29 @@ describe('CafeService', () => {
 
     service = module.get<CafeService>(CafeService);
     repository = module.get<Repository<CafeEntity>>(getRepositoryToken(CafeEntity));
-
-    await seedDatabase();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  const seedDatabase = async () => {
-    repository.clear();
-    cafesList = [];
-    for (let i = 0; i < 5; i++) {
-      const cafe: CafeEntity = await repository.save({
-        name: faker.company.name(),
-        description: faker.address.secondaryAddress(),
-        price: faker.address.city(),
-      })
-      cafesList.push(cafe);
+  it('create should return a new cafe', async () => {
+    const cafe: CafeEntity = {
+      id: "",
+      name: faker.company.name(),
+      description: faker.lorem.sentence(),
+      price: faker.commerce.price(),
+      tienda: null
     }
-  }
+    const newCafe: CafeEntity = await service.create(cafe);
+    expect(newCafe).not.toBeNull();
+
+    const storedCafe: CafeEntity = await repository.findOne({ where: { id: newCafe.id } })
+    expect(storedCafe).not.toBeNull();
+    expect(storedCafe.name).toEqual(newCafe.name)
+    expect(storedCafe.description).toEqual(newCafe.description)
+    expect(storedCafe.tienda).toEqual(newCafe.tienda)
+  });
 
 });
 

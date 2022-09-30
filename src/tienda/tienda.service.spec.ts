@@ -17,27 +17,29 @@ describe('TiendaService', () => {
 
     service = module.get<TiendaService>(TiendaService);
     repository = module.get<Repository<TiendaEntity>>(getRepositoryToken(TiendaEntity));
-
-    await seedDatabase();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
   
-  const seedDatabase = async () => {
-    repository.clear();
-    tiendasList = [];
-    for (let i = 0; i < 5; i++) {
-      const tienda: TiendaEntity = await repository.save({
-        name: faker.company.name(),
-        address: faker.address.secondaryAddress(),
-        city: faker.address.city(),
-        type: faker.company.bsAdjective()
-      })
-      tiendasList.push(tienda);
+  it('create should return a new tienda', async () => {
+    const tienda: TiendaEntity = {
+      id: "",
+      name: faker.company.name(),
+      address: faker.address.secondaryAddress(),
+      phone: faker.phone.number(),
+      cafes: []
     }
-  }
+    const newTienda: TiendaEntity = await service.create(tienda);
+    expect(newTienda).not.toBeNull();
+
+    const storedTienda: TiendaEntity = await repository.findOne({ where: { id: newTienda.id } })
+    expect(storedTienda).not.toBeNull();
+    expect(storedTienda.name).toEqual(newTienda.name)
+    expect(storedTienda.address).toEqual(newTienda.address)
+    expect(storedTienda.phone).toEqual(newTienda.phone)
+  });
 
 });
 

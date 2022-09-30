@@ -14,7 +14,7 @@ export class TiendaEntity {
  address: string;
 
  @Column()
- phone: number;
+ phone: string;
 
  @OneToMany(() => CafeEntity, cafe  => cafe.tienda)
     cafes: CafeEntity[];

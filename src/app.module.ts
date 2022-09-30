@@ -6,6 +6,7 @@ import { CafeEntity } from './cafe/cafe.entity';
 import { CafeModule } from './cafe/cafe.module';
 import { TiendaEntity } from './tienda/tienda.entity';
 import { TiendaModule } from './tienda/tienda.module';
+import { CafeTiendaModule } from './cafe-tienda/cafe-tienda.module';
 
 @Module({
   imports: [CafeModule, TiendaModule, TypeOrmModule.forRoot({
@@ -19,7 +20,7 @@ import { TiendaModule } from './tienda/tienda.module';
     dropSchema: true,
     synchronize: true,
     keepConnectionAlive: true
-  }),],
+  }), CafeTiendaModule,],
   controllers: [AppController],
   providers: [AppService],
 })
